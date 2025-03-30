@@ -1,26 +1,24 @@
 package ru.yandex;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import io.restassured.config.HttpClientConfig;
 import io.restassured.config.RestAssuredConfig;
 import org.junit.*;
 import org.junit.rules.Timeout;
+import ru.yandex.steps.Client;
 import ru.yandex.steps.Courier;
 import ru.yandex.steps.Creds;
-import ru.yandex.steps.DataRandom;
+import ru.yandex.steps.Profile;
 
 import java.net.HttpURLConnection;
-
-import static io.restassured.RestAssured.given;
 import static ru.yandex.steps.ConfigConst.*;
 
 
-public class CourierLoginNegativeTest {
-    DataRandom data;
+public class CourierLoginNegativeTest extends Client {
     Courier courier;
     Creds creds;
     RestAssuredConfig newConfig;
+    Profile profile;
 
 
     @Rule
@@ -29,15 +27,14 @@ public class CourierLoginNegativeTest {
 
     @Before
     public void setUp() {
-        RestAssured.baseURI = BASE_URI;
-        data = new DataRandom();
-        courier = new Courier(data.getFirstName(), data.getLogin(), data.getPassword());
+        profile = new Profile();
+        courier = new Courier(profile.getFirstName(), profile.getLogin(), profile.getPassword());
     }
 
     @After
     public void tearDown() {
        String id = courier.loginCourier();
-        if (!id.equals("fail")) {
+        if (!id.equals(FAILED)) {
             courier.deleteCourier(id);
            }
     }
@@ -50,9 +47,9 @@ public class CourierLoginNegativeTest {
     public void loginCourierNegative() {
         courier.loginCourierFail();
     }
+
     //для авторизации нужно передать все обязательные поля;
     //если поля login нет, запрос возвращает ошибку;
-
     @Test()
     @DisplayName("There is no login field")
     @Description("for successful login , you must pass all required fields;\n" +
@@ -62,8 +59,8 @@ public class CourierLoginNegativeTest {
         creds = new Creds(NULL,courier.getPassword());
         courier.loginCourierBadCreds(creds);
 
-
     }
+
     //если поля password нет, запрос вылетает по таймауту (по причине недоступности сервера)
     @Test
     @DisplayName("There is no password field")
@@ -76,10 +73,8 @@ public class CourierLoginNegativeTest {
         courier.createCourier();
         creds = new Creds(courier.getLogin(),NULL);
 
-            Assert.assertThrows(Exception.class,() -> given()
+            Assert.assertThrows(Exception.class,() -> spec()
                     .config(newConfig)
-                    .header("Content-type", "application/json")
-                    .and()
                     .body(creds)
                     .log().all()
                     .when()
@@ -93,9 +88,9 @@ public class CourierLoginNegativeTest {
     @Description("the service will return an error if you enter an incorrect login")
     public void loginCourierWithWrongLogin() {
         courier.createCourier();
-        data = new DataRandom();
-        creds = new Creds(data.getLogin(), courier.getPassword());
-        courier.loginCourierFail(creds);
+        profile = new Profile();
+        creds = new Creds(profile.getLogin(), courier.getPassword());
+        courier.loginCourierWrong(creds);
     }
 
     //система вернёт ошибку, если неправильно указать неверный пароль
@@ -104,9 +99,9 @@ public class CourierLoginNegativeTest {
     @Description("the service will return an error if you enter an incorrect password")
     public void loginCourierWithWrongPassword() {
         courier.createCourier();
-        data = new DataRandom();
-        creds = new Creds(courier.getLogin(), data.getPassword());
-        courier.loginCourierFail(creds);
+        profile = new Profile();
+        creds = new Creds(courier.getLogin(), profile.getPassword());
+        courier.loginCourierWrong(creds);
     }
 
 }

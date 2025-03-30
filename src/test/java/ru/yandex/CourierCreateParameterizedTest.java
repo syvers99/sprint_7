@@ -2,21 +2,17 @@ package ru.yandex;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import ru.yandex.steps.Courier;
-import ru.yandex.steps.Profile;
 import static ru.yandex.steps.ConfigConst.*;
 
 @RunWith(Parameterized.class)
 public class CourierCreateParameterizedTest {
     Courier courier;
-    Profile profile;
     public CourierCreateParameterizedTest (Courier courier){
         this.courier = courier;
     }
@@ -24,11 +20,6 @@ public class CourierCreateParameterizedTest {
     @Rule
     public Timeout globalTimeout = Timeout.seconds(10);
 
-    @Before
-    public void setUp() {
-        RestAssured.baseURI = BASE_URI;
-
-    }
 
     @Parameterized.Parameters
     public static Object[][] getTextData() {
@@ -52,8 +43,7 @@ public class CourierCreateParameterizedTest {
             "if one of the fields is missing, the request returns an error;" +
             " the request returns the correct response code")
     public void createCourierWithoutField() {
-        profile = courier.getProfile();
-        courier.createCourierBadRequest(profile);
+        courier.createCourierBadRequest(courier.getProfile());
     }
 }
 

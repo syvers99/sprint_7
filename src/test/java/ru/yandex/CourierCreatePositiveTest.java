@@ -2,24 +2,22 @@ package ru.yandex;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import ru.yandex.steps.Courier;
-import ru.yandex.steps.DataRandom;
-import static ru.yandex.steps.ConfigConst.BASE_URI;
+import ru.yandex.steps.Profile;
+
 
 public class CourierCreatePositiveTest {
-    DataRandom data;
+    Profile profile;
     Courier courier;
 
 
     @Before
     public void setUp() {
-        RestAssured.baseURI = BASE_URI;
-        data = new DataRandom();
-        courier = new Courier(data.getFirstName(), data.getLogin(), data.getPassword());
+        profile = new Profile();
+        courier = new Courier(profile.getFirstName(), profile.getLogin(), profile.getPassword());
         courier.loginCourierFail();
 
     }
@@ -45,7 +43,7 @@ public class CourierCreatePositiveTest {
     @DisplayName("Courier without the optional firstName field")
     @Description("a courier can be created without the optional firstName field")
     public void createCourierWithoutFirstName() {
-        courier = new Courier(null, data.getLogin(), data.getPassword());
+        courier = new Courier(null, profile.getLogin(), profile.getPassword());
         courier.createCourier();
     }
 }

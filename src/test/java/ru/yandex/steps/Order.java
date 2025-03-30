@@ -1,25 +1,20 @@
 package ru.yandex.steps;
 
 import io.qameta.allure.Step;
+import lombok.AllArgsConstructor;
 
-import java.io.File;
 import java.net.HttpURLConnection;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static ru.yandex.steps.ConfigConst.*;
-
-public class Order {
-    File order;
-    public Order(File order) {
-        this.order = order;
-    }
+@AllArgsConstructor
+public class Order extends Client {
+    OrderData order;
     @Step("create a order")
     public String createOrder() {
-        return given()
-                .header("Content-type", "application/json")
-                .and()
+        return spec()
                 .body(order)
                 .when()
                 .post(ORDERS_PATH)
@@ -30,10 +25,10 @@ public class Order {
     }
     @Step("get a order")
     public int getOrder(String track){
-       return  given()
+       return  spec()
                 .queryParam("t",track)
                 .when()
-                .get(TRACK_PATH)
+                .get(ORDERS_PATH + "/track")
                 .then().statusCode(HttpURLConnection.HTTP_OK)
                 .assertThat().body("order.id",notNullValue())
                 .extract()
@@ -42,47 +37,47 @@ public class Order {
     }
     @Step("cancel a order")
     public void cancelOrder(String track){
-        given()
+        spec()
                 .queryParam("track", track)
                 .when()
                 .log().all()
-                .put(CANCEL_PATH)
+                .put(ORDERS_PATH + "/cancel")
                 .then()
                 .log().all()
                 .statusCode(HttpURLConnection.HTTP_OK)
-                .assertThat().body("ok",is(TRUE));
+                .assertThat().body("ok",is(true));
 
 
     }
     @Step("finish a order")
     public void finishOrder(int orderId){
-        given()
+        spec()
                 .when()
                 .log().all()
-                .put(FINISH_PATH + "/" + orderId)
+                .put(ORDERS_PATH + "/finish/" + orderId)
                 .then()
                 .log().all()
                 .statusCode(HttpURLConnection.HTTP_OK)
-                .assertThat().body("ok",is(TRUE));
+                .assertThat().body("ok",is(true));
 
 
     }
 
     @Step("accept a order")
     public void acceptOrder(int orderId, String courierId){
-        given()
+        spec()
                 .queryParam("courierId", courierId)
                 .log().all()
                 .when()
                 .put("/api/v1/orders/accept/" + orderId)
                 .then().log().all()
                 .statusCode(HttpURLConnection.HTTP_OK)
-                .assertThat().body("ok",is(TRUE));
+                .assertThat().body("ok",is(true));
 
     }
     @Step("get all orders")
     public void getAllOrders(){
-        given()
+        spec()
                 .get(ORDERS_PATH)
                 .then().statusCode(HttpURLConnection.HTTP_OK)
                 .assertThat().body("orders",notNullValue());
@@ -90,7 +85,7 @@ public class Order {
     }
     @Step("get courier orders")
     public void getCourierOrders(String courierId){
-        given()
+        spec()
                 .queryParam("limit",LIMIT)
                 .queryParam("page",PAGE)
                 .queryParam("courierId",courierId)

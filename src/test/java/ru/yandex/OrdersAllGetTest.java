@@ -7,24 +7,25 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import ru.yandex.steps.Courier;
-import ru.yandex.steps.DataRandom;
 import ru.yandex.steps.Order;
+import ru.yandex.steps.Profile;
+
 import static ru.yandex.steps.ConfigConst.*;
 public class OrdersAllGetTest {
     Order order;
     Courier courier;
-    DataRandom data;
     int orderId;
     String track;
     String courierId;
+    Profile profile;
 
 
     @Before
     public void setUp() {
         RestAssured.baseURI = BASE_URI;
-        order = ORDER_GRAY;
-        data = new DataRandom();
-        courier = new Courier(data.getFirstName(), data.getLogin(), data.getPassword());
+        order = new Order(ORDER);
+        profile = new Profile();
+        courier = new Courier(profile.getFirstName(), profile.getLogin(), profile.getPassword());
 
     }
     @After

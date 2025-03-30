@@ -1,41 +1,23 @@
 package ru.yandex.steps;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.UUID;
+@AllArgsConstructor
+@Getter
+@Setter
 public class Profile {
+    private String firstName;
     private String login;
     private String password;
-    private String firstName;
 
-    public Profile(String firstName,String login,String password) {
-        this.firstName = firstName;
-        this.password = password;
-        this.login = login;
+    public Profile() {
+        password = UUID.randomUUID().toString();
+        login = UUID.randomUUID().toString();
+        firstName = UUID.randomUUID().toString();
     }
 
-
-
-    public String getLogin() {
-        return login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
 }
 

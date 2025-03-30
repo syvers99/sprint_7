@@ -1,31 +1,27 @@
 package ru.yandex;
+import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
-import jdk.jfr.Description;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import ru.yandex.steps.Courier;
 import ru.yandex.steps.Creds;
-import ru.yandex.steps.DataRandom;
-
+import ru.yandex.steps.Profile;
 
 
 import static org.junit.Assert.assertNotNull;
-import static ru.yandex.steps.ConfigConst.BASE_URI;
 
 
 public class CourierLoginPositiveTest {
-    DataRandom data;
+    Profile profile;
     Courier courier;
     Creds creds;
 
 
     @Before
     public void setUp() {
-        RestAssured.baseURI = BASE_URI;
-        data = new DataRandom();
-        courier = new Courier(data.getFirstName(), data.getLogin(), data.getPassword());
+        profile = new Profile();
+        courier = new Courier(profile.getFirstName(), profile.getLogin(), profile.getPassword());
         courier.loginCourierFail();
         creds = courier.getCreds();
 

@@ -2,17 +2,14 @@ package ru.yandex;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import ru.yandex.steps.Courier;
-import ru.yandex.steps.DataRandom;
-import ru.yandex.steps.Profile;
-import static ru.yandex.steps.ConfigConst.*;
+import ru.yandex.steps.*;
+
 
 public class CourierCreateNegativeTest {
-    DataRandom data;
     Courier courier;
     Courier newCourier;
     Profile profile;
@@ -20,9 +17,8 @@ public class CourierCreateNegativeTest {
 
     @Before
     public void setUp() {
-        RestAssured.baseURI = BASE_URI;
-        data = new DataRandom();
-        courier = new Courier(data.getFirstName(), data.getLogin(), data.getPassword());
+        profile = new Profile();
+        courier = new Courier(profile.getFirstName(), profile.getLogin(), profile.getPassword());
         courier.loginCourierFail();
 
     }
@@ -39,23 +35,21 @@ public class CourierCreateNegativeTest {
     @Description ("You can't create two identical couriers")
     public void createCourierDouble() {
         courier.createCourier();
-        profile = courier.getProfile();
-        courier.createCourierFail(profile);
+        courier.createCourierFail(courier.getProfile());
     }
 
-    //если создать пользователя с логином, который уже есть, возвращается ошибка.
-    //запрос возвращает правильный код ответа в случае создания с существующим логином
+    //Если создать пользователя с логином, который уже есть, возвращается ошибка.
+    //Запрос возвращает правильный код ответа в случае создания с существующим логином
     @Test
     @DisplayName("Create a courier with a login that already exists")
-    @Description("you can't create a courier with a login that already exists,\n" +
+    @Description("You can't create a courier with a login that already exists,\n" +
             "the request returns the correct response code")
     public void createCourierDoubleLogin() {
         courier.createCourier();
         oldLogin = courier.getLogin();
-        DataRandom newData = new DataRandom();
-        newCourier = new Courier(newData.getFirstName(), oldLogin, newData.getPassword());
-        profile = newCourier.getProfile();
-        courier.createCourierFail(profile);
+        profile = new Profile();
+        newCourier = new Courier(profile.getFirstName(), oldLogin, profile.getPassword());
+        courier.createCourierFail(newCourier.getProfile());
 
     }
 
