@@ -2,10 +2,7 @@ package ru.yandex.steps;
 
 import io.qameta.allure.Step;
 import lombok.AllArgsConstructor;
-
 import java.net.HttpURLConnection;
-
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static ru.yandex.steps.ConfigConst.*;
